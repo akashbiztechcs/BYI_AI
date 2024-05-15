@@ -1,4 +1,4 @@
-const { Midjourney } = require("midjourney");
+// const { Midjourney } = require("midjourney");
 const Credential = require("../schema/credential.model");
 const { sendResponse } = require("../helper/commonFunction");
 
@@ -6,7 +6,7 @@ const { sendResponse } = require("../helper/commonFunction");
 const verifyAPI = async (req, res, next) => {
     try {
         const apiKey = req.get('API-KEY')
- 
+
         const credentials = await Credential.findOne({ _id: apiKey });
 
         if (!credentials) {
@@ -24,10 +24,12 @@ const verifyAPI = async (req, res, next) => {
         }
 
         req.googleApiKey = credentials.googleApiKey;
+        req.user = { apiKey }
 
         next();
     } catch (error) {
-        throw new error
+        console.log('🚀 error 🚀-->>', error);
+        throw error
     }
 }
 

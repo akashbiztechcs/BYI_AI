@@ -8,12 +8,11 @@ const http = require('http').createServer(app);
 const port = process.env.PORT || 3202;
 // const myEmitter = require('./eventEmitter');
 
-// This code is for v4 of the openai package: npmjs.com/package/openai
 const OpenAI = require("openai");
-// const { downloadImageViaURL } = require("./downloadImage");
+
 const fs = require('fs')
-// const { midJourneyImage, midJourneySingleImage } = require('./helper/midjourney');
 require("dotenv").config();
+require('./config/socket.io')(http)
 
 // Middleware to parse JSON
 app.use(express.json());
@@ -21,32 +20,16 @@ app.use(express.urlencoded({ extended: true }));
 
 // Enable CORS for all routes
 app.use(cors({
-  origin: true
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 }));
 
 app.use('/api/setup', require('./routes/setup.route'))
 app.use('/api/midjourney', require('./routes/midjourney.route'))
+app.use('/api/gemini', require('./routes/gemini.route'))
 
 
-const socketIO = require('socket.io')
-const io = socketIO(http, {
-  cors: {
-    origin: '*',
-  },
-});
-//Add this before the app.get() block
-io.on('connection', (socket) => {
-  console.log(`⚡: ${socket.id} user just connected!`);
-  socket.on('disconnect', () => {
-    console.log('🔥: A user disconnected');
-  });
 
-  // Listen for new messages from clients
-  socket.on('msg', (message) => {
-    // Broadcast the new message to all connected clients
-    io.emit('msg', message);
-  });
-});
 
 // myEmitter.on('progress', (data) => {
 //   io.emit('progress', data);

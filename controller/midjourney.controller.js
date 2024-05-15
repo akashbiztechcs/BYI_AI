@@ -1,20 +1,28 @@
 const { sendResponse } = require("../helper/commonFunction")
-const { midJourneyImage } = require("../helper/midjourney")
+const { midJourneyImage, midJourneySingleImage } = require("../helper/midjourney")
 
 module.exports = {
     generateImage: async (req,res) => {
         try {
             const { prompt } = req.body
-            console.log('🚀 prompt 🚀-->>', prompt);
-            console.log('🚀 req.client 🚀-->>', req.client);
             const client = req.client
 
-            // const generatedImage = await midJourneyImage(client, prompt)
+            const generatedImage = await midJourneyImage(client, prompt)
 
-            // console.log('🚀 generatedImage 🚀-->>', generatedImage);
-            sendResponse(res, 200, "Credentials saved successfully", null)
+            sendResponse(res, 200, "Image generated successfully", generatedImage)
         } catch (error) {
             sendResponse(res, 500, error, null)
+        }
+    },
+    generateSingleImage: async (req,res) => {
+        try {
+            const client = req.client
+            const generatedImage = await midJourneySingleImage(client, req.body)
+
+            sendResponse(res, 200, "Single Image generated successfully", generatedImage)
+        } catch (error) {
+            console.log('🚀 error 🚀-->>', error);
+            sendResponse(res, 400, error, null)
         }
     }
 }

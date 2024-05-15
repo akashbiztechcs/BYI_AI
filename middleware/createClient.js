@@ -1,22 +1,30 @@
-const { Midjourney } = require("midjourney");
-
+const { Midjourney } = require('freezer-midjourney-api');
+const clientCache = require('../config/clientCache');
 
 const createClient = async (req, res, next) => {
     try {
         const midjourneyData = req.midjourneyData;
-        console.log('🚀 midjourneyData 🚀-->>', midjourneyData);
+
+        const key = `client-${req.user.apiKey}`;
+
+        if (clientCache.hasClient(key)) {
+            console.log("Using cached client.");
+            req.client = clientCache.getClient(key);
+            return next();
+        }
+
         const data = {
             ...midjourneyData,
             Debug: false,
-            Ws: true, //enable ws is required for remix mode (and custom zoom)
+            Ws: true,
         }
 
 
         const client = new Midjourney(data);
-
-        // Call the init method immediately when the module is loaded
         await client.init()
         console.log("Midjourney client initialized successfully.");
+
+        clientCache.setClient(key, client);
         req.client = client
         next();
     } catch (error) {

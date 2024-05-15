@@ -1,19 +1,18 @@
-const { Midjourney } = require("midjourney");
-
+const myEmitter = require("./socket.helper");
 
 const midJourneyImage = async (client, prompt) => {
     //imagine
     const Imagine = await client.Imagine(
         prompt,
         (uri, progress) => {
-            // myEmitter.emit('progress', {
-            //     uri,
-            //     progress
-            // });
+            myEmitter.emit('event', 'progress', {
+                uri,
+                progress
+            });
             console.log("loading111111111", uri, "progress1111111111", progress);
         }
     );
-    console.log(Imagine);
+
     if (!Imagine) {
         console.log("no message");
         return;
@@ -23,7 +22,7 @@ const midJourneyImage = async (client, prompt) => {
 }
 
 
-const midJourneySingleImage = async ({ msgId, flags, customId }) => {
+const midJourneySingleImage = async (client, { msgId, flags, customId }) => {
     //imagine
     // const U1CustomID = Imagine.options?.find((o) => o.label === selection)?.custom;
     // if (!U1CustomID) {
@@ -31,6 +30,7 @@ const midJourneySingleImage = async ({ msgId, flags, customId }) => {
     //     return;
     // }
     // Upscale U1
+    console.log('🚀 client, { msgId, flags, customId } 🚀-->>', client, { msgId, flags, customId });
     const Upscale = await client.Custom({
         msgId,
         flags,
