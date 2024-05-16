@@ -18,6 +18,7 @@ app.use(cors({
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 }));
 
+app.use('/', require('./routes/index.route'))
 app.use('/api/setup', require('./routes/setup.route'))
 app.use('/api/midjourney', require('./routes/midjourney.route'))
 app.use('/api/gemini', require('./routes/gemini.route'))
