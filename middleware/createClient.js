@@ -19,7 +19,7 @@ const createClient = async (req, res, next) => {
             Ws: true,
         }
 
-
+// IN20240519000885
         const client = new Midjourney(data);
         await client.init()
         console.log("Midjourney client initialized successfully.");
